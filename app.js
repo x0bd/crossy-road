@@ -135,20 +135,104 @@ const init = () => {
 
 init();
 
-class Texture {
-	pretty() {
-		console.log("I am a Texture");
-	}
+const renderer = new THREE.WebGLRenderer({
+	alpha: true,
+	antialias: true,
+});
+
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;
+renderer.setSize(window, innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+function Texture(width, height, rects) {
+	const canvas = document.createElement("canvas");
+	canvas.width = width;
+	canvas.height = height;
+	const context = canvas.getContext("2d");
+	context.fillStyle = "#fff";
+	context.fillRect(0, 0, width, height);
+	context.fillStyle = "rgba(0,0,0,0.6)";
+	rects.forEach((rect) => {
+		context.fillRect(rect.x, rect.y, rect.w, rect.h);
+	});
+	return THREE.CanvasTexture(canvas);
 }
 
-class Lane {
-	distance() {
-		console.log("The distance is short");
-	}
+function Wheel() {
+	const wheel = new THREE.Mesh(
+		new THREE.BufferGeometry(12 * zoom, 33 * zoom, 12 * zoom),
+		new THREE.MeshLambertMaterial({ color: 0x333, flatShading: true })
+	);
+	wheel.position.z = 6 * zoom;
+	return wheel;
 }
 
-class Chicken {
-	cluck() {
-		console.log("Cluck Cluck Cluck");
-	}
+function Car() {
+	const car = new THREE.Group();
+	const color =
+		vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
+	const main = new THREE.Mesh(
+		new THREE.BufferGeometry(60 * zoom, 30 * zoom, 15 * zoom),
+		new THREE.MeshPhongMaterial({ color, flatShading: true })
+	);
+	main.position.z = 12 * zoom;
+	main.castShadow = true;
+	main.receiveShadow = true;
+	car.add(main);
+
+	const cabin = new THREE.Mesh(
+		new THREE.BufferGeometry(33 * zoom, 24 * zoom, 12 * zoom),
+		[
+			new THREE.MeshPhongMaterial({
+				color: 0xccc,
+				flatShading: true,
+				map: carBackTexture,
+			}),
+			new THREE.MeshPhongMaterial({
+				color: 0xccc,
+				flatShading: true,
+				map: carFrontTexture,
+			}),
+			new THREE.MeshPhongMaterial({
+				color: 0xccc,
+				flatShading: true,
+				map: carRightSideTexture,
+			}),
+			new THREE.MeshPhongMaterial({
+				color: 0xccc,
+				flatShading: true,
+				map: carLeftSideTexture,
+			}),
+			new THREE.MeshPhongMaterial({ color: 0xccc, flatShading: true }),
+			new THREE.MeshPhongMaterial({ color: 0xccc, flatShading: true }),
+		]
+	);
+
+	cabin.position.x = 6 * zoom;
+	cabin.position.z = 25.5 * zoom;
+	cabin.castShadow = true;
+	cabin.receiveShadow = true;
+	car.add(cabin);
+
+	const frontWheel = new Wheel();
+	frontWheel.position.x = -18 * zoom;
+	car.add(frontWheel);
+
+	const backWheel = new Wheel();
+	backWheel.position.x = 18 * zoom;
+	car.add(backWheel);
+
+	car.castShadow = true;
+	car.receiveShadow = false;
+
+	return car;
+}
+
+function Lane() {
+	console.log("The distance is short");
+}
+
+function Chicken() {
+	console.log("Cluck Cluck Cluck");
 }
