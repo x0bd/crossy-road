@@ -161,7 +161,7 @@ function Texture(width, height, rects) {
 
 function Wheel() {
 	const wheel = new THREE.Mesh(
-		new THREE.BufferGeometry(12 * zoom, 33 * zoom, 12 * zoom),
+		new THREE.BoxGeometry(12 * zoom, 33 * zoom, 12 * zoom),
 		new THREE.MeshLambertMaterial({ color: 0x333, flatShading: true })
 	);
 	wheel.position.z = 6 * zoom;
@@ -173,7 +173,7 @@ function Car() {
 	const color =
 		vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
 	const main = new THREE.Mesh(
-		new THREE.BufferGeometry(60 * zoom, 30 * zoom, 15 * zoom),
+		new THREE.BoxGeometry(60 * zoom, 30 * zoom, 15 * zoom),
 		new THREE.MeshPhongMaterial({ color, flatShading: true })
 	);
 	main.position.z = 12 * zoom;
@@ -182,7 +182,7 @@ function Car() {
 	car.add(main);
 
 	const cabin = new THREE.Mesh(
-		new THREE.BufferGeometry(33 * zoom, 24 * zoom, 12 * zoom),
+		new THREE.BoxGeometry(33 * zoom, 24 * zoom, 12 * zoom),
 		[
 			new THREE.MeshPhongMaterial({
 				color: 0xccc,
@@ -229,10 +229,173 @@ function Car() {
 	return car;
 }
 
-function Lane() {
-	console.log("The distance is short");
+function Truck() {
+	const truck = new THREE.Group();
+	const color =
+		vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
+
+	const base = new THREE.Mesh(
+		new THREE.BoxGeometry(100 * zoom, 25 * zoom, 5 * zoom),
+		new THREE.MeshLambertMaterial({ color: 0xb4c6fc, flatShading: true })
+	);
+
+	base.position.z = 10 * zoom;
+	truck.add(base);
+
+	const cargo = new THREE.Mesh(
+		new THREE.BoxGeometry(75 * zoom, 35 * zoom, 40 * zoom),
+		new THREE.MeshLambertMaterial({ color: 0xb4c6fc, flatShading: true })
+	);
+
+	cargo.position.x = 15 * zoom;
+	cargo.position.z = 30 * zoom;
+	cargo.castShadow = true;
+	cargo.receiveShadow = true;
+	truck.add(cargo);
+
+	const cabin = new THREE.Mesh(
+		new THREE.BoxGeometry(100 * zoom, 25 * zoom, 5 * zoom),
+		[
+			new THREE.MeshPhongMaterial({ color, flatShading: true }),
+			new THREE.MeshPhongMaterial({
+				color,
+				flatShading: true,
+				map: truckFrontTexture,
+			}),
+			new THREE.MeshPhongMaterial({
+				color,
+				flatShading: true,
+				map: truckRightSideTexture,
+			}),
+			new THREE.MeshPhongMaterial({
+				color,
+				flatShading: true,
+				map: truckLeftSideTexture,
+			}),
+			new THREE.MeshPhongMaterial({ color, flatShading: true }),
+			new THREE.MeshPhongMaterial({ color, flatShading: true }),
+		]
+	);
+
+	cabin.position.x = -40 * zoom;
+	cabin.position.z = 20 * zoom;
+	cabin.castShadow = true;
+	cabin.receiveShadow = true;
+	truck.add(cabin);
+
+	const frontWheel = new Wheel();
+	frontWheel.position.x = -38 * zoom;
+	truck.add(frontWheel);
+
+	const middleWheel = new Wheel();
+	middleWheel.position.x = -10 * zoom;
+	truck.add(middleWheel);
+
+	const backWheel = new Wheel();
+	backWheel.position.x = 30 * zoom;
+	truck.add(backWheel);
+
+	return truck;
+}
+
+function Three() {
+	const three = new THREE.Group();
+	const truck = new THREE.Mesh(
+		new THREE.BoxGeometry(15 * zoom, 15 * zoom, 20 * zoom),
+		new THREE.MeshPhongMaterial({ color: 0x4d2926, flatShading: true })
+	);
+	truck.position.z = 10 * zoom;
+	truck.castShadow = true;
+	truck.receiveShadow = true;
+	three.add(truck);
+
+	let height = threeHeights[Math.floor(Math.random() * threeHeights.length)];
+
+	const crown = new THREE.Mesh(
+		new THREE.BoxGeometry(30 * zoom, 30 * zoom, height * zoom),
+		new THREE.MeshLambertMaterial({ color: 0x7aa21d, flatShading: true })
+	);
+	crown.position.z = (height / 2 + 20) * zoom;
+	crown.castShadow = true;
+	crown.receiveShadow = false;
+	three.add(crown);
+
+	return crown;
+}
+
+function Lane(index) {}
+
+function Grass() {
+	const grass = new THREE.Group();
+
+	const createSection = (color) =>
+		new THREE.Mesh(
+			new THREE.BoxGeometry(
+				boardWidth * zoom,
+				positionWidth * zoom,
+				3 * zoom
+			),
+			new THREE.MeshPhongMaterial({ color })
+		);
+
+	const middle = createSection(0xbaf455);
+	middle.receiveShadow = true;
+	grass.add(middle);
+
+	const left = createSection(0x99c846);
+	left.receiveShadow = true;
+	grass.add(left);
+
+	const right = createSection(0x99c846);
+	right.receiveShadow = true;
+	grass.add(right);
+
+	grass.position.z = 1.5 * zoom;
+	return grass;
+}
+
+function Road() {
+	const road = new THREE.Group();
+	const createSection = (color) =>
+		new THREE.Mesh(
+			new THREE.PlaneGeometry(boardWidth * zoom, positionWidth * zoom),
+			new THREE.MeshPhongMaterial({ color })
+		);
+
+	const middle = createSection(0x454a59);
+	middle.receiveShadow = true;
+	road.add(middle);
+
+	const left = createSection(0x393d49);
+	left.position.x = -boardWidth * zoom;
+	road.add(left);
+
+	const right = createSection(0x393d49);
+	right.position.x = boardWidth * zoom;
+	road.add(right);
+
+	return road;
 }
 
 function Chicken() {
-	console.log("Cluck Cluck Cluck");
+	const chicken = new THREE.Group();
+	const body = new THREE.Mesh(
+		new THREE.BoxGeometry(chickenSize * zoom, chicken * zoom, 20 * zoom),
+		new THREE.MeshPhongMaterial({ color: 0xfff, flatShading: true })
+	);
+	body.position.z = 10 * zoom;
+	body.castShadow = true;
+	body.receiveShadow = true;
+	chicken.add(body);
+
+	const rowel = new THREE.Mesh(
+		new THREE.BoxGeometry(2 * zoom, 4 * zoom, 2 * zoom),
+		new THREE.MeshLambertMaterial({ color: 0xf0619a, flatShading: true })
+	);
+	rowel.position.z = 21 * zoom;
+	rowel.castShadow = true;
+	rowel.receiveShadow = false;
+	chicken.add(rowel);
+
+	return chicken;
 }
