@@ -105,10 +105,6 @@ dirLight.shadow.camera.right = d;
 dirLight.shadow.camera.top = d;
 dirLight.shadow.camera.bottom = -d;
 
-// var helper = new THREE.CameraHelper( dirLight.shadow.camera );
-// var helper = new THREE.CameraHelper( camera );
-// scene.add(helper)
-
 const backLight = new THREE.DirectionalLight(0x000000, 0.4);
 backLight.position.set(200, 200, 50);
 backLight.castShadow = true;
@@ -116,8 +112,8 @@ scene.add(backLight);
 
 const laneTypes = ["car", "truck", "forest"];
 const laneSpeeds = [2, 2.5, 3];
-const vechicleColors = [0xa52523, 0xbdb638, 0x78b14b];
-const threeHeights = [20, 45, 60];
+const vehicleColors = [0xa52523, 0xbdb638, 0x78b14b];
+const treeHeights = [20, 45, 60];
 
 const initaliseValues = () => {
 	lanes = generateLanes();
@@ -178,7 +174,7 @@ function Wheel() {
 function Car() {
 	const car = new THREE.Group();
 	const color =
-		vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+		vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
 
 	const main = new THREE.Mesh(
 		new THREE.BoxGeometry(60 * zoom, 30 * zoom, 15 * zoom),
@@ -239,7 +235,7 @@ function Car() {
 function Truck() {
 	const truck = new THREE.Group();
 	const color =
-		vechicleColors[Math.floor(Math.random() * vechicleColors.length)];
+		vehicleColors[Math.floor(Math.random() * vehicleColors.length)];
 
 	const base = new THREE.Mesh(
 		new THREE.BoxGeometry(100 * zoom, 25 * zoom, 5 * zoom),
@@ -302,8 +298,8 @@ function Truck() {
 	return truck;
 }
 
-function Three() {
-	const three = new THREE.Group();
+function Tree() {
+	const tree = new THREE.Group();
 
 	const trunk = new THREE.Mesh(
 		new THREE.BoxGeometry(15 * zoom, 15 * zoom, 20 * zoom),
@@ -312,9 +308,9 @@ function Three() {
 	trunk.position.z = 10 * zoom;
 	trunk.castShadow = true;
 	trunk.receiveShadow = true;
-	three.add(trunk);
+	tree.add(trunk);
 
-	let height = threeHeights[Math.floor(Math.random() * threeHeights.length)];
+	let height = treeHeights[Math.floor(Math.random() * treeHeights.length)];
 
 	const crown = new THREE.Mesh(
 		new THREE.BoxGeometry(30 * zoom, 30 * zoom, height * zoom),
@@ -323,9 +319,9 @@ function Three() {
 	crown.position.z = (height / 2 + 20) * zoom;
 	crown.castShadow = true;
 	crown.receiveShadow = false;
-	three.add(crown);
+	tree.add(crown);
 
-	return three;
+	return tree;
 }
 
 function Chicken() {
@@ -426,18 +422,18 @@ function Lane(index) {
 			this.mesh = new Grass();
 
 			this.occupiedPositions = new Set();
-			this.threes = [1, 2, 3, 4].map(() => {
-				const three = new Three();
+			this.trees = [1, 2, 3, 4].map(() => {
+				const tree = new Tree();
 				let position;
 				do {
 					position = Math.floor(Math.random() * columns);
 				} while (this.occupiedPositions.has(position));
 				this.occupiedPositions.add(position);
-				three.position.x =
+				tree.position.x =
 					(position * positionWidth + positionWidth / 2) * zoom -
 					(boardWidth * zoom) / 2;
-				this.mesh.add(three);
-				return three;
+				this.mesh.add(tree);
+				return tree;
 			});
 			break;
 		}
