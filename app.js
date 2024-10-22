@@ -86,7 +86,7 @@ const addLane = () => {
 const chicken = new Chicken();
 scene.add(chicken);
 
-const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffff);
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff);
 scene.add(hemiLight);
 
 const initialDirLightPositionX = -100;
