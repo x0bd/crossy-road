@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
-const counterDOM = document.getElementById("counter");
-const endDOM = document.getElementById("end");
+const counter = document.getElementById("counter");
+const end = document.getElementById("end");
 
 const scene = new THREE.Scene();
 
@@ -491,7 +491,7 @@ function Lane(index) {
 document.querySelector("#retry").addEventListener("click", () => {
 	lanes.forEach((lane) => scene.remove(lane.mesh));
 	initaliseValues();
-	endDOM.style.visibility = "hidden";
+	end.style.visibility = "hidden";
 });
 
 document
@@ -676,12 +676,12 @@ function animate(timestamp) {
 			switch (moves[0]) {
 				case "forward": {
 					currentLane++;
-					counterDOM.innerHTML = currentLane;
+					counter.innerHTML = currentLane;
 					break;
 				}
 				case "backward": {
 					currentLane--;
-					counterDOM.innerHTML = currentLane;
+					counter.innerHTML = currentLane;
 					break;
 				}
 				case "left": {
@@ -711,7 +711,7 @@ function animate(timestamp) {
 			const carMinX = vechicle.position.x - (vechicleLength * zoom) / 2;
 			const carMaxX = vechicle.position.x + (vechicleLength * zoom) / 2;
 			if (chickenMaxX > carMinX && chickenMinX < carMaxX) {
-				endDOM.style.visibility = "visible";
+				end.style.visibility = "visible";
 			}
 		});
 	}
